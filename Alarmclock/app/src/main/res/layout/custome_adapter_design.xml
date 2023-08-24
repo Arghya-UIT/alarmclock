@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:background="@drawable/custome_adapter_shape"
     android:layout_margin="10dp">
 
     <LinearLayout
@@ -37,6 +38,7 @@
 
         </LinearLayout>
         <TextView
+            android:id="@+id/selectedDays"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ewfrefr"
@@ -51,6 +53,7 @@
         android:padding="10dp">
 
         <TextView
+            android:id="@+id/editBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="edit"
@@ -58,6 +61,7 @@
             android:textStyle="italic" />
 
         <Switch
+            android:id="@+id/alarmOnOffBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
              />

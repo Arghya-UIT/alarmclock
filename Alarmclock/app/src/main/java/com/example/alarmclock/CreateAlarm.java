@@ -20,6 +20,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
+import com.example.alarmclock.database.AlarmModel;
+import com.example.alarmclock.database.MyDbHelper;
+
+import org.json.JSONArray;
+
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -33,6 +38,8 @@ public class CreateAlarm extends AppCompatActivity {
     private TextView pickedRingTone;
     private Button cancelButton;
     private Button saveButton;
+    private String selectedDaysJson;
+    private String pickedTimeForStore;
 
 
     private static final int PICK_RINGTONE_REQUEST = 1;
@@ -88,11 +95,100 @@ public class CreateAlarm extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Handle save button click
+                String alarmName = getAlarmNameTextview.getText().toString();
+                String timeForDisplay = pickedTime.getText().toString();
+//                int timeForStore = /* Convert time to suitable format for storage */;
+//                String selectedDaysJson = selecte;/* Convert selectedDays array to JSON string */;
+                String ringtoneUriString = ringtoneUri != null ? ringtoneUri.toString() : "";
+
+                // Create an instance of AlarmModel with the details
+                AlarmModel alarmModel = new AlarmModel();
+                alarmModel.setAlarm_name(alarmName);
+                alarmModel.setTime_for_display(timeForDisplay);
+                alarmModel.setTime_for_store(pickedTimeForStore);
+                alarmModel.setSelectedDays(selectedDaysJson);
+                alarmModel.setRingtone_uri(ringtoneUriString);
+                alarmModel.setStatus("1");
+
+                // Add the alarm to the database using your database helper
+                MyDbHelper dbHelper = new MyDbHelper(CreateAlarm.this);
+                dbHelper.addTask(alarmModel);
+
+                dbHelper.close();
 
                 finish(); // Close the activity
             }
         });
     }
+
+//    private void showDateSelectorDialog() {
+//        LayoutInflater inflater = LayoutInflater.from(this);
+//        View dialogView = inflater.inflate(R.layout.dailouge_select_days, null);
+//
+//        final CheckBox sundayCheckBox = dialogView.findViewById(R.id.sunday);
+//        final CheckBox mondayCheckBox = dialogView.findViewById(R.id.monday);
+//        final CheckBox tuesdayCheckBox = dialogView.findViewById(R.id.tuesday);
+//        final CheckBox wednesdayCheckBox = dialogView.findViewById(R.id.wednesday);
+//        final CheckBox thursdayCheckBox = dialogView.findViewById(R.id.thursday);
+//        final CheckBox fridayCheckBox = dialogView.findViewById(R.id.friday);
+//        final CheckBox saturdayCheckBox = dialogView.findViewById(R.id.saturday);
+//
+//        // Initialize an array to keep track of selected days
+//        final boolean[] selectedDays = new boolean[7];
+//        Arrays.fill(selectedDays, true); // Initially, all days are selected
+//
+//        // Set checked state for the CheckBoxes based on the array
+//        sundayCheckBox.setChecked(selectedDays[0]);
+//        mondayCheckBox.setChecked(selectedDays[1]);
+//        tuesdayCheckBox.setChecked(selectedDays[2]);
+//        wednesdayCheckBox.setChecked(selectedDays[3]);
+//        thursdayCheckBox.setChecked(selectedDays[4]);
+//        fridayCheckBox.setChecked(selectedDays[5]);
+//        saturdayCheckBox.setChecked(selectedDays[6]);
+//
+//
+//        // Create the AlertDialog.Builder instance and set the view
+//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+//        dialogBuilder.setView(dialogView);
+//
+//        dialogBuilder.setTitle("Select Days");
+//
+//        // Set positive button click listener
+//        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                // Update the selectedDays array based on CheckBox states
+//                selectedDays[0] = sundayCheckBox.isChecked();
+//                selectedDays[1] = mondayCheckBox.isChecked();
+//                selectedDays[2] = tuesdayCheckBox.isChecked();
+//                selectedDays[3] = wednesdayCheckBox.isChecked();
+//                selectedDays[4] = thursdayCheckBox.isChecked();
+//                selectedDays[5] = fridayCheckBox.isChecked();
+//                selectedDays[6] = saturdayCheckBox.isChecked();
+//
+////                saveButton(selectedDays);
+//                daysSelected = selectedDays;
+////                for (int i = 0; i < selectedDays.length; i++) {
+////                    Log.d("Selected Days", "Day " + i + ": " + selectedDays[i]);
+////                }
+//
+//                // Handle the selectedDays array as needed
+//                // For example, you can pass it to another method or store it
+//            }
+//        });
+//
+//        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                // Handle the Cancel button click or dismiss the dialog
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        // Create and show the AlertDialog
+//        AlertDialog dialog = dialogBuilder.create();
+//        dialog.show();
+//    }
 
     private void showDateSelectorDialog() {
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -106,20 +202,6 @@ public class CreateAlarm extends AppCompatActivity {
         final CheckBox fridayCheckBox = dialogView.findViewById(R.id.friday);
         final CheckBox saturdayCheckBox = dialogView.findViewById(R.id.saturday);
 
-        // Initialize an array to keep track of selected days
-        final boolean[] selectedDays = new boolean[7];
-        Arrays.fill(selectedDays, true); // Initially, all days are selected
-
-        // Set checked state for the CheckBoxes based on the array
-        sundayCheckBox.setChecked(selectedDays[0]);
-        mondayCheckBox.setChecked(selectedDays[1]);
-        tuesdayCheckBox.setChecked(selectedDays[2]);
-        wednesdayCheckBox.setChecked(selectedDays[3]);
-        thursdayCheckBox.setChecked(selectedDays[4]);
-        fridayCheckBox.setChecked(selectedDays[5]);
-        saturdayCheckBox.setChecked(selectedDays[6]);
-
-
         // Create the AlertDialog.Builder instance and set the view
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setView(dialogView);
@@ -131,25 +213,30 @@ public class CreateAlarm extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Update the selectedDays array based on CheckBox states
-                selectedDays[0] = sundayCheckBox.isChecked();
-                selectedDays[1] = mondayCheckBox.isChecked();
-                selectedDays[2] = tuesdayCheckBox.isChecked();
-                selectedDays[3] = wednesdayCheckBox.isChecked();
-                selectedDays[4] = thursdayCheckBox.isChecked();
-                selectedDays[5] = fridayCheckBox.isChecked();
-                selectedDays[6] = saturdayCheckBox.isChecked();
+                boolean[] selectedDays = {
+                        sundayCheckBox.isChecked(),
+                        mondayCheckBox.isChecked(),
+                        tuesdayCheckBox.isChecked(),
+                        wednesdayCheckBox.isChecked(),
+                        thursdayCheckBox.isChecked(),
+                        fridayCheckBox.isChecked(),
+                        saturdayCheckBox.isChecked()
+                };
 
+                // Convert selectedDays array to JSON string
+                JSONArray jsonArray = new JSONArray();
+                for (boolean day : selectedDays) {
+                    jsonArray.put(day);
+                }
+                 selectedDaysJson = jsonArray.toString();
+                Log.d("msg-json"," "+selectedDaysJson);
 
-//                for (int i = 0; i < selectedDays.length; i++) {
-//                    Log.d("Selected Days", "Day " + i + ": " + selectedDays[i]);
-//                }
-
-                // Handle the selectedDays array as needed
-                // For example, you can pass it to another method or store it
+                // Now you have the selectedDaysJson string
+                // You can store it in a member variable if needed or pass it to another method
+//                daysSelected = selectedDays;
             }
         });
 
-        // Set negative button click listener
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -162,6 +249,7 @@ public class CreateAlarm extends AppCompatActivity {
         AlertDialog dialog = dialogBuilder.create();
         dialog.show();
     }
+
 
 
     private void showTimePickerDialog() {
@@ -196,8 +284,11 @@ public class CreateAlarm extends AppCompatActivity {
                 // Handle the selected time (hour, minute, amPm) here
                 String amPmText = amPm == 1 ? "PM" : "AM";
                 String selectedTime = String.format(Locale.getDefault(), "%02d:%02d %s", hour, minute, amPmText);
+                String selectedTime24Hr = String.format(Locale.getDefault(), "%02d:%02d", hour + (amPm * 12), minute);
+
                 // Assuming you have a TextView for displaying the selected time
                 pickedTime.setText(selectedTime);
+                pickedTimeForStore =selectedTime24Hr;
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -209,6 +300,7 @@ public class CreateAlarm extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
     private void pickRingtone() {
         Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
         startActivityForResult(intent, PICK_RINGTONE_REQUEST);
@@ -219,7 +311,7 @@ public class CreateAlarm extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_RINGTONE_REQUEST && resultCode == RESULT_OK) {
-             ringtoneUri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+            ringtoneUri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
 //             Log.d("uri tone ",".. "+ringtoneUri);
 
             if (ringtoneUri != null) {
