@@ -1,78 +1,75 @@
 package com.example.alarmclock;
 
-
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.alarmclock.database.AlarmModel;
 
 import java.util.List;
 
-public class CustomeAdapter extends ArrayAdapter<AlarmModel> {
+public class CustomeAdapter extends RecyclerView.Adapter<CustomeAdapter.ViewHolder> {
     private List<AlarmModel> alarmList;
-    TextView alarmName, showTime, am_pm, seletedDays, editBtn;
-    Switch toggleBtn;
+    private Context context;
 
     public CustomeAdapter(Context context, List<AlarmModel> alarmList) {
-        super(context, R.layout.custome_adapter_design, alarmList);
+        this.context = context;
         this.alarmList = alarmList;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.custome_adapter_design, parent, false);
+        return new ViewHolder(view);
+    }
 
-        if (view == null) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            view = inflater.inflate(R.layout.custome_adapter_design, parent, false);
-        }
-
-        alarmName = view.findViewById(R.id.alarmName);
-        showTime = view.findViewById(R.id.showTime);
-        am_pm = view.findViewById(R.id.am_pm);
-        seletedDays = view.findViewById(R.id.selectedDays);
-        toggleBtn = view.findViewById(R.id.alarmOnOffBtn);
-
-
-        // Get the current contact from the list
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         AlarmModel alarm = alarmList.get(position);
 
+        holder.alarmName.setText(alarm.getAlarm_name());
+        holder.showTime.setText(alarm.getTime_for_display());
+        holder.seletedDays.setText(alarm.getSelectedDays());
 
-        alarmName.setText(alarm.getAlarm_name());
-        showTime.setText(alarm.getTime_for_display());
-        seletedDays.setText(alarm.getSelectedDays());
-        if ("1".equals(alarm.getStatus())) {
-            toggleBtn.setChecked(true);  // Turn the switch on
-        } else {
-            toggleBtn.setChecked(false); // Turn the switch off
-        }
+        holder.toggleBtn.setChecked("1".equals(alarm.getStatus()));
 
-        editBtn.setOnClickListener(new View.OnClickListener() {
+        holder.editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // Open EditTaskActivity with the task ID
-                        Intent editIntent = new Intent(getContext(), EditTaskActivity.class);
-                        editIntent.putExtra("task_id", alarm.getId()); // Pass the task ID
-                        getContext().startActivity(editIntent);
-                    }
-                });
-                Toast.makeText(getContext(), "Image clicked at position: " + position, Toast.LENGTH_SHORT).show();
-                Log.d("this---db id", " " + alarm.getId());
+                Intent editIntent = new Intent(context, EditTaskActivity.class);
+                editIntent.putExtra("task_id", alarm.getId());
+                context.startActivity(editIntent);
             }
         });
+    }
 
+    @Override
+    public int getItemCount() {
+        return alarmList.size();
+    }
 
-        return view;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView alarmName;
+        TextView showTime;
+        TextView seletedDays;
+        TextView editBtn;
+        Switch toggleBtn;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            alarmName = itemView.findViewById(R.id.alarmName);
+            showTime = itemView.findViewById(R.id.showTime);
+            seletedDays = itemView.findViewById(R.id.selectedDays);
+            editBtn = itemView.findViewById(R.id.editBtn);
+            toggleBtn = itemView.findViewById(R.id.alarmOnOffBtn);
+        }
     }
 }

@@ -3,15 +3,16 @@ package com.example.alarmclock;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.alarmclock.database.AlarmModel;
 import com.example.alarmclock.database.MyDbHelper;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
@@ -22,8 +23,9 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private ArrayList<AlarmModel> alarmaList;
-    private ArrayAdapter<AlarmModel> adapter;
     private MyDbHelper dbHelper;
+    private CustomeAdapter adapter;
+
     private int  MAKE_NEW_ALARM_ACTIVITY =1;
     private int ADD_TASK_REQUEST_CODE=2;
 
@@ -40,10 +42,20 @@ public class MainActivity extends AppCompatActivity {
         TextView collaspedText = findViewById(R.id.collapsed_text);
         FloatingActionButton addNewAlarmBtn= findViewById(R.id.addNewAlarmBtn);
 
+        dbHelper = new MyDbHelper(this);
+        alarmaList = new ArrayList<>();
+        adapter = new CustomeAdapter(this,alarmaList);
+
+
+        RecyclerView contactListView = findViewById(R.id.alarmListListview);
+        contactListView.setLayoutManager(new LinearLayoutManager(this));
+
+        contactListView.setAdapter(adapter);
+        fetchContact();
+
         collaspedText.setText(formattedDate);
         toolbar.setTitle("active alarms");
         setSupportActionBar(toolbar);
-        fetchContact();
 
         addNewAlarmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,15 +65,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        dbHelper = new MyDbHelper(this);
-        alarmaList = new ArrayList<>();
-        adapter = new CustomeAdapter(this, alarmaList);
-
-
-        ListView contactListView = findViewById(R.id.alarmListListview);
-        contactListView.setAdapter(adapter);
-
-        fetchContact();
 
     }
 

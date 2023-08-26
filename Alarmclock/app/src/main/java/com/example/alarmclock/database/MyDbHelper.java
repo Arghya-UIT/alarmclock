@@ -47,8 +47,8 @@ public class MyDbHelper extends SQLiteOpenHelper {
         values.put(Params.ALARM_NAME, alarmModel.getAlarm_name());
         values.put(Params.TIME_FOR_DISPLAY, alarmModel.getTime_for_display());
         values.put(String.valueOf(Params.TIME_FOR_STORE), alarmModel.getTime_for_store());
-        values.put(Params.URI, alarmModel.getRingtone_uri());
         values.put(Params.SELECTED_DAYS, alarmModel.getSelectedDays());  // Store the JSON string
+        values.put(Params.URI, alarmModel.getRingtone_uri());
         values.put(Params.STATUS,alarmModel.getStatus());
 
         long newRowId =db.insert(Params.TABLE_NAME, null, values);
@@ -73,8 +73,8 @@ public class MyDbHelper extends SQLiteOpenHelper {
                 alarmModel.setAlarm_name(cursor.getString(1));
                 alarmModel.setTime_for_display(cursor.getString(2));
                 alarmModel.setTime_for_store(cursor.getString(3));
-                alarmModel.setRingtone_uri(cursor.getString(4));
-                alarmModel.setSelectedDays(cursor.getString(5));
+                alarmModel.setRingtone_uri(cursor.getString(5));
+                alarmModel.setSelectedDays(cursor.getString(4));
                 alarmModel.setStatus(cursor.getString(6));
 
                 taskList.add(alarmModel);

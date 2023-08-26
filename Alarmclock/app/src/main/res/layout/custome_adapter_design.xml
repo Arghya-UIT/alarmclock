@@ -2,70 +2,66 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:layout_margin="20dp"
     android:background="@drawable/custome_adapter_shape"
-    android:layout_margin="10dp">
+    android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/alarmName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="uktyuk "
-            android:textSize="8dp"/>
+            android:textSize="8dp" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+
             <TextView
                 android:id="@+id/showTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="19:00"
                 android:textSize="15dp"
-                android:textStyle="bold"/>
-            <TextView
-                android:id="@+id/am_pm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="am"
-                android:textSize="10dp"
-                android:textStyle="bold"
-                android:paddingLeft="8dp"/>
+                android:textStyle="bold" />
+
 
         </LinearLayout>
+
         <TextView
             android:id="@+id/selectedDays"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ewfrefr"
-            android:textSize="8dp"/>
+            android:textSize="8dp" />
 
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="10dp">
-
-        <TextView
-            android:id="@+id/editBtn"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="edit"
-            android:textSize="8dp"
-            android:textStyle="italic" />
+            android:orientation="vertical"
+            android:padding="10dp">
 
-        <Switch
-            android:id="@+id/alarmOnOffBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-             />
+            <TextView
+                android:id="@+id/editBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="edit"
+                android:textSize="8dp"
+                android:textStyle="italic" />
 
+            <Switch
+                android:id="@+id/alarmOnOffBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
     </LinearLayout>
 
 

@@ -1,5 +1,5 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -20,9 +20,9 @@
                 android:id="@+id/collapsed_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Collapsed Text"
                 android:layout_gravity="center"
-                android:layout_marginTop="?attr/actionBarSize"/>
+                android:layout_marginTop="?attr/actionBarSize"
+                android:text="Collapsed Text" />
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -39,27 +39,35 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/alarmListListview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:padding="16dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-            <ListView
-                android:id="@+id/alarmListListview"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
-
-
-        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+
+    <!--        <ListView-->
+    <!--            android:id="@+id/alarmListListview"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="0dp"-->
+    <!--            android:layout_weight="1" />-->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addNewAlarmBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_input_add"
         android:layout_gravity="bottom|center"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"
+        android:src="@android:drawable/ic_input_add" />
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+    <!--    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">-->
+
