@@ -15,9 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.example.alarmclock.database.AlarmModel;
@@ -27,8 +25,8 @@ import org.json.JSONArray;
 
 import java.util.Locale;
 
-public class CreateAlarm extends AppCompatActivity {
-
+public class EditAlarmActivity extends CreateAlarm {
+    private MyDbHelper dbHelper;
     private LinearLayoutCompat getTimeLayout;
     private LinearLayoutCompat getSelectedDaysLayout;
     private LinearLayoutCompat getRingtoneLayout;
@@ -38,18 +36,16 @@ public class CreateAlarm extends AppCompatActivity {
     private Button cancelButton;
     private Button saveButton;
     private String selectedDaysJson;
-    protected String pickedTimeForStore;
-
-
-    private static final int PICK_RINGTONE_REQUEST = 1;
+    private String pickedTimeForStore;
     private Uri ringtoneUri;
+    private static final int PICK_RINGTONE_REQUEST_EDIT = 2;
+
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_alarm);
+        setContentView(R.layout.activity_edit_alarm);
 
-        // Initialize UI elements
         pickedTime = findViewById(R.id.pickedTime);
         pickedRingTone = findViewById(R.id.pickedRingTone);
         getTimeLayout = findViewById(R.id.getTimeLayout);
@@ -58,17 +54,22 @@ public class CreateAlarm extends AppCompatActivity {
         getAlarmNameTextview = findViewById(R.id.getAlarmNameTextview);
         cancelButton = findViewById(R.id.cancelButton);
         saveButton = findViewById(R.id.saveButton);
+        dbHelper = new MyDbHelper(this);
 
-        // Set click listeners for buttons
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle cancel button click
-                finish(); // Close the activity
+        Intent intent = getIntent();
+        if (intent != null) {
+            int taskId = intent.getIntExtra("task_id", -1);
+            if (taskId != -1) {
+                Log.d("getting here task id", " " + taskId);
+                AlarmModel task = dbHelper.fetchTaskById(taskId);
+                if (task != null) {
+                    pickedTime.setText(task.getTime_for_display());
+                    pickedRingTone.setText(task.getTime_for_store());
+                    getAlarmNameTextview.setText(task.getAlarm_name());
+
+                }
             }
-        });
-
-
+        }
         getTimeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,10 +91,10 @@ public class CreateAlarm extends AppCompatActivity {
                 pickRingtone();
             }
         });
+
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                // Handle save button click
+            public void onClick(View view) {
                 String alarmName = getAlarmNameTextview.getText().toString();
                 String timeForDisplay = pickedTime.getText().toString();
                 String ringtoneUriString = ringtoneUri != null ? ringtoneUri.toString() : "";
@@ -108,17 +109,15 @@ public class CreateAlarm extends AppCompatActivity {
                 alarmModel.setStatus("1");
 
                 // Add the alarm to the database using your database helper
-                MyDbHelper dbHelper = new MyDbHelper(CreateAlarm.this);
-                dbHelper.addTask(alarmModel);
+                MyDbHelper dbHelper = new MyDbHelper(EditAlarmActivity.this);
+                dbHelper.updateTask(alarmModel,intent.getIntExtra("task_id", -1));
 
-                dbHelper.close();
+                setResult(RESULT_OK);
 
                 finish(); // Close the activity
             }
         });
     }
-
-
 
     protected void showDateSelectorDialog() {
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -158,7 +157,7 @@ public class CreateAlarm extends AppCompatActivity {
                 for (boolean day : selectedDays) {
                     jsonArray.put(day);
                 }
-                 selectedDaysJson = jsonArray.toString();
+                selectedDaysJson = jsonArray.toString();
                 Log.d("msg-json"," "+selectedDaysJson);
 
                 // Now you have the selectedDaysJson string
@@ -179,8 +178,6 @@ public class CreateAlarm extends AppCompatActivity {
         AlertDialog dialog = dialogBuilder.create();
         dialog.show();
     }
-
-
 
     protected void showTimePickerDialog() {
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -233,14 +230,14 @@ public class CreateAlarm extends AppCompatActivity {
 
     protected void pickRingtone() {
         Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-        startActivityForResult(intent, PICK_RINGTONE_REQUEST);
+        startActivityForResult(intent, PICK_RINGTONE_REQUEST_EDIT);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_RINGTONE_REQUEST && resultCode == RESULT_OK) {
+        if (requestCode == PICK_RINGTONE_REQUEST_EDIT && resultCode == RESULT_OK) {
             ringtoneUri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
 //             Log.d("uri tone ",".. "+ringtoneUri);
 
@@ -251,5 +248,4 @@ public class CreateAlarm extends AppCompatActivity {
             }
         }
     }
-
 }

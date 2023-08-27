@@ -20,8 +20,10 @@
                 android:id="@+id/collapsed_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
                 android:layout_marginTop="?attr/actionBarSize"
+                android:textSize="40sp"
                 android:text="Collapsed Text" />
 
             <androidx.appcompat.widget.Toolbar

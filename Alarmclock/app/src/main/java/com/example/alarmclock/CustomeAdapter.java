@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -18,17 +19,38 @@ import java.util.List;
 public class CustomeAdapter extends RecyclerView.Adapter<CustomeAdapter.ViewHolder> {
     private List<AlarmModel> alarmList;
     private Context context;
-
-    public CustomeAdapter(Context context, List<AlarmModel> alarmList) {
+    private CustomeAdapterListener longClickListener;
+    public interface CustomeAdapterListener {
+        void onItemLongClick(AlarmModel alarm);
+    }
+    public CustomeAdapter(Context context, List<AlarmModel> alarmList, CustomeAdapterListener listener) {
         this.context = context;
         this.alarmList = alarmList;
+        this.longClickListener=listener;
     }
+
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.custome_adapter_design, parent, false);
-        return new ViewHolder(view);
+        ViewHolder viewHolder = new ViewHolder(view);
+
+        // Attach the long click listener to the itemView
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                int position = viewHolder.getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    AlarmModel alarm = alarmList.get(position);
+                    longClickListener.onItemLongClick(alarm);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        return viewHolder;
     }
 
     @Override
@@ -44,7 +66,7 @@ public class CustomeAdapter extends RecyclerView.Adapter<CustomeAdapter.ViewHold
         holder.editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent editIntent = new Intent(context, EditTaskActivity.class);
+                Intent editIntent = new Intent(context, EditAlarmActivity.class);
                 editIntent.putExtra("task_id", alarm.getId());
                 context.startActivity(editIntent);
             }
@@ -55,6 +77,8 @@ public class CustomeAdapter extends RecyclerView.Adapter<CustomeAdapter.ViewHold
     public int getItemCount() {
         return alarmList.size();
     }
+
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView alarmName;

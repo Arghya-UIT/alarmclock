@@ -17,6 +17,7 @@
         android:theme="@style/Theme.AlarmClock"
         tools:targetApi="31">
         <activity android:name=".CreateAlarm"/>
+        <activity android:name=".EditAlarmActivity"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">

@@ -49,9 +49,9 @@ public class MyDbHelper extends SQLiteOpenHelper {
         values.put(String.valueOf(Params.TIME_FOR_STORE), alarmModel.getTime_for_store());
         values.put(Params.SELECTED_DAYS, alarmModel.getSelectedDays());  // Store the JSON string
         values.put(Params.URI, alarmModel.getRingtone_uri());
-        values.put(Params.STATUS,alarmModel.getStatus());
+        values.put(Params.STATUS, alarmModel.getStatus());
 
-        long newRowId =db.insert(Params.TABLE_NAME, null, values);
+        long newRowId = db.insert(Params.TABLE_NAME, null, values);
         db.close();
         if (newRowId != -1) {
             Log.d("dbarghya", "Alarm added successfully. ID: " + newRowId);
@@ -64,7 +64,8 @@ public class MyDbHelper extends SQLiteOpenHelper {
     public ArrayList<AlarmModel> fetchTask() {
         ArrayList<AlarmModel> taskList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        String select = "SELECT * FROM " + Params.TABLE_NAME;
+        String select = "SELECT * FROM " + Params.TABLE_NAME + " ORDER BY " + Params.TIME_FOR_STORE + " ASC";
+
         Cursor cursor = db.rawQuery(select, null);
         if (cursor.moveToFirst()) {
             do {
@@ -85,5 +86,58 @@ public class MyDbHelper extends SQLiteOpenHelper {
     }
 
 
+    public AlarmModel fetchTaskById(int taskId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String select = "SELECT * FROM " + Params.TABLE_NAME + " WHERE " + Params.KEY_ID + " = ?";
+        Cursor cursor = db.rawQuery(select, new String[]{String.valueOf(taskId)});
 
+        AlarmModel alarmModel = null;
+
+        if (cursor.moveToFirst()) {
+            alarmModel = new AlarmModel();
+            alarmModel.setId(cursor.getInt(0));
+            alarmModel.setAlarm_name(cursor.getString(1));
+            alarmModel.setTime_for_display(cursor.getString(2));
+            alarmModel.setTime_for_store(cursor.getString(3));
+            alarmModel.setSelectedDays(cursor.getString(4));
+            alarmModel.setRingtone_uri(cursor.getString(5));
+            alarmModel.setStatus(cursor.getString(6));
+        }
+
+        cursor.close();
+        return alarmModel;
+    }
+
+    public void updateTask(AlarmModel alarmModel ,int taskId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(Params.ALARM_NAME, alarmModel.getAlarm_name());
+        values.put(Params.TIME_FOR_DISPLAY, alarmModel.getTime_for_display());
+        values.put(Params.TIME_FOR_STORE, alarmModel.getTime_for_store());
+        values.put(Params.SELECTED_DAYS, alarmModel.getSelectedDays());
+        values.put(Params.URI, alarmModel.getRingtone_uri());
+        values.put(Params.STATUS, alarmModel.getStatus());
+
+
+        db.update(
+                Params.TABLE_NAME,
+                values,
+                Params.KEY_ID + " = ?",
+                new String[]{String.valueOf(taskId)}
+        );
+
+        db.close();
+    }
+
+    public void deleteAlarm(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(
+                Params.TABLE_NAME,
+                Params.KEY_ID + " = ?",
+                new String[]{String.valueOf(id)}
+        );
+        db.close();
+        Log.d("deleted from db"," "+id);
+    }
 }
