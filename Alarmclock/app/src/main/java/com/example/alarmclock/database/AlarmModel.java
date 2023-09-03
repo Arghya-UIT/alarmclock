@@ -1,7 +1,7 @@
 package com.example.alarmclock.database;
 
 public class AlarmModel {
-    private int id;
+    private long id;
     private String alarm_name;
     private String time_for_display;
     private String time_for_store;
@@ -25,11 +25,11 @@ public class AlarmModel {
         this.selectedDays = selectedDays;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

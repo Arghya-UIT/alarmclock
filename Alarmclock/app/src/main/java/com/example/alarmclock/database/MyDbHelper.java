@@ -36,7 +36,7 @@ public class MyDbHelper extends SQLiteOpenHelper {
         // Implement if needed
     }
 
-    public void addTask(AlarmModel alarmModel) {
+    public long addTask(AlarmModel alarmModel) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -59,6 +59,7 @@ public class MyDbHelper extends SQLiteOpenHelper {
         } else {
             Log.d("dbarghya", "Failed to add alarm to the database.");
         }
+        return newRowId;
     }
 
     public ArrayList<AlarmModel> fetchTask() {
@@ -86,7 +87,7 @@ public class MyDbHelper extends SQLiteOpenHelper {
     }
 
 
-    public AlarmModel fetchTaskById(int taskId) {
+    public AlarmModel fetchTaskById(long taskId) {
         SQLiteDatabase db = this.getReadableDatabase();
         String select = "SELECT * FROM " + Params.TABLE_NAME + " WHERE " + Params.KEY_ID + " = ?";
         Cursor cursor = db.rawQuery(select, new String[]{String.valueOf(taskId)});
@@ -95,7 +96,7 @@ public class MyDbHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             alarmModel = new AlarmModel();
-            alarmModel.setId(cursor.getInt(0));
+            alarmModel.setId(cursor.getLong(0));
             alarmModel.setAlarm_name(cursor.getString(1));
             alarmModel.setTime_for_display(cursor.getString(2));
             alarmModel.setTime_for_store(cursor.getString(3));
@@ -130,7 +131,7 @@ public class MyDbHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void deleteAlarm(int id) {
+    public void deleteAlarm(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(
                 Params.TABLE_NAME,
@@ -140,4 +141,32 @@ public class MyDbHelper extends SQLiteOpenHelper {
         db.close();
         Log.d("deleted from db"," "+id);
     }
+
+    public void updateAlarmStatus(long id, String status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(Params.STATUS, status);
+
+        try {
+            int rowsAffected = db.update(
+                    Params.TABLE_NAME,
+                    values,
+                    Params.KEY_ID + " = ?",
+                    new String[]{String.valueOf(id)}
+            );
+
+            if (rowsAffected > 0) {
+                Log.d("dbarghya", "Alarm status updated successfully. ID: " + id);
+            } else {
+                Log.d("dbarghya", "No rows updated. ID: " + id);
+            }
+        } catch (Exception e) {
+            Log.e("dbarghya", "Error updating alarm status: " + e.getMessage());
+        } finally {
+            db.close();
+        }
+    }
+
+
 }

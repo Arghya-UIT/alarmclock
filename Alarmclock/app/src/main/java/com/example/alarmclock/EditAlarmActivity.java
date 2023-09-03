@@ -131,17 +131,14 @@ public class EditAlarmActivity extends CreateAlarm {
         final CheckBox fridayCheckBox = dialogView.findViewById(R.id.friday);
         final CheckBox saturdayCheckBox = dialogView.findViewById(R.id.saturday);
 
-        // Create the AlertDialog.Builder instance and set the view
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setView(dialogView);
 
         dialogBuilder.setTitle("Select Days");
 
-        // Set positive button click listener
         dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // Update the selectedDays array based on CheckBox states
                 boolean[] selectedDays = {
                         sundayCheckBox.isChecked(),
                         mondayCheckBox.isChecked(),
@@ -152,7 +149,6 @@ public class EditAlarmActivity extends CreateAlarm {
                         saturdayCheckBox.isChecked()
                 };
 
-                // Convert selectedDays array to JSON string
                 JSONArray jsonArray = new JSONArray();
                 for (boolean day : selectedDays) {
                     jsonArray.put(day);
@@ -160,16 +156,12 @@ public class EditAlarmActivity extends CreateAlarm {
                 selectedDaysJson = jsonArray.toString();
                 Log.d("msg-json"," "+selectedDaysJson);
 
-                // Now you have the selectedDaysJson string
-                // You can store it in a member variable if needed or pass it to another method
-//                daysSelected = selectedDays;
             }
         });
 
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // Handle the Cancel button click or dismiss the dialog
                 dialog.dismiss();
             }
         });
@@ -198,22 +190,18 @@ public class EditAlarmActivity extends CreateAlarm {
                     minute = timePicker.getCurrentMinute();
                 }
 
-                // Get AM/PM selection
                 int amPm = hour >= 12 ? 1 : 0;
 
-                // Convert to 12-hour format if needed
                 if (hour > 12) {
                     hour -= 12;
                 } else if (hour == 0) {
                     hour = 12;
                 }
 
-                // Handle the selected time (hour, minute, amPm) here
                 String amPmText = amPm == 1 ? "PM" : "AM";
                 String selectedTime = String.format(Locale.getDefault(), "%02d:%02d %s", hour, minute, amPmText);
                 String selectedTime24Hr = String.format(Locale.getDefault(), "%02d:%02d", hour + (amPm * 12), minute);
 
-                // Assuming you have a TextView for displaying the selected time
                 pickedTime.setText(selectedTime);
                 pickedTimeForStore =selectedTime24Hr;
             }

@@ -43,16 +43,15 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/getSelectedDaysLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginTop="16dp"
-        android:layout_margin="10dp">
+        android:gravity="center">
+
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:text="Select Days"
             android:textStyle="bold"
             android:textSize="20sp"/>
@@ -60,7 +59,7 @@
         <TextView
             android:id="@+id/selectedDays"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:text="fwe"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>

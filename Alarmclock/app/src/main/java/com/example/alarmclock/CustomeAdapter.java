@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.alarmclock.database.AlarmModel;
+import com.example.alarmclock.database.MyDbHelper;
 
 import java.util.List;
 
@@ -20,13 +21,15 @@ public class CustomeAdapter extends RecyclerView.Adapter<CustomeAdapter.ViewHold
     private List<AlarmModel> alarmList;
     private Context context;
     private CustomeAdapterListener longClickListener;
+
     public interface CustomeAdapterListener {
         void onItemLongClick(AlarmModel alarm);
     }
+
     public CustomeAdapter(Context context, List<AlarmModel> alarmList, CustomeAdapterListener listener) {
         this.context = context;
         this.alarmList = alarmList;
-        this.longClickListener=listener;
+        this.longClickListener = listener;
     }
 
 
@@ -61,7 +64,23 @@ public class CustomeAdapter extends RecyclerView.Adapter<CustomeAdapter.ViewHold
         holder.showTime.setText(alarm.getTime_for_display());
         holder.seletedDays.setText(alarm.getSelectedDays());
 
-        holder.toggleBtn.setChecked("1".equals(alarm.getStatus()));
+        if ("1".equals(alarm.getStatus())) {
+            holder.toggleBtn.setChecked(true);
+        }
+        holder.toggleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MyDbHelper db =new MyDbHelper(context);
+                if("1".equals(alarm.getStatus())){
+                    db.updateAlarmStatus(alarm.getId(),"0");
+                    holder.toggleBtn.setChecked(false);
+                }else{
+                    db.updateAlarmStatus(alarm.getId(),"1");
+                    holder.toggleBtn.setChecked(true);
+                }
+
+            }
+        });
 
         holder.editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +96,6 @@ public class CustomeAdapter extends RecyclerView.Adapter<CustomeAdapter.ViewHold
     public int getItemCount() {
         return alarmList.size();
     }
-
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {

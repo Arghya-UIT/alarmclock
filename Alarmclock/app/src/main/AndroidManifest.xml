@@ -4,6 +4,13 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 <!--    <uses-permission android:name="android.permission.WRITE_SETTINGS" />-->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+
 
 
     <application
@@ -18,6 +25,15 @@
         tools:targetApi="31">
         <activity android:name=".CreateAlarm"/>
         <activity android:name=".EditAlarmActivity"></activity>
+        <activity android:name=".AlarmScreenActivity"></activity>
+        <receiver
+            android:name=".AlarmReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <!-- Intent filters if any -->
+
+        </receiver>
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

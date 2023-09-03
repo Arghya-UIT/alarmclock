@@ -1,10 +1,14 @@
 package com.example.alarmclock;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -107,9 +111,36 @@ public class CreateAlarm extends AppCompatActivity {
                 alarmModel.setRingtone_uri(ringtoneUriString);
                 alarmModel.setStatus("1");
 
-                // Add the alarm to the database using your database helper
                 MyDbHelper dbHelper = new MyDbHelper(CreateAlarm.this);
-                dbHelper.addTask(alarmModel);
+                long rowId = dbHelper.addTask(alarmModel);
+                Log.d("row-id",""+rowId);
+
+                Intent intent = new Intent(CreateAlarm.this, AlarmReceiver.class);
+                intent.putExtra("Message", alarmModel.getAlarm_name());
+                intent.putExtra("sound", alarmModel.getRingtone_uri());
+                intent.putExtra("RemindDate", alarmModel.getTime_for_store());
+                intent.putExtra("id", rowId);
+
+                PendingIntent intent1 = PendingIntent.getBroadcast(CreateAlarm.this, (int) alarmModel.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        if (!alarmManager.canScheduleExactAlarms()) {
+                            Log.e("Alarm Scheduling", "Cannot schedule exact alarms.");
+                            return;
+                        }
+                    }
+                }
+                long alarmTimeMillis = System.currentTimeMillis() + 60000; // 10 seconds from now
+                try {
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTimeMillis, intent1);
+
+                    setResult(RESULT_OK);
+                } catch (SecurityException e) {
+                    // Handle the SecurityException, which may occur if your app lacks permission to set the exact alarm.
+                    Log.e("Alarm Scheduling", "SecurityException: " + e.getMessage());
+                    // You can inform the user or take appropriate action here.
+                }
 
                 dbHelper.close();
 
@@ -117,7 +148,6 @@ public class CreateAlarm extends AppCompatActivity {
             }
         });
     }
-
 
 
     protected void showDateSelectorDialog() {
@@ -158,12 +188,9 @@ public class CreateAlarm extends AppCompatActivity {
                 for (boolean day : selectedDays) {
                     jsonArray.put(day);
                 }
-                 selectedDaysJson = jsonArray.toString();
-                Log.d("msg-json"," "+selectedDaysJson);
+                selectedDaysJson = jsonArray.toString();
+                Log.d("msg-json", " " + selectedDaysJson);
 
-                // Now you have the selectedDaysJson string
-                // You can store it in a member variable if needed or pass it to another method
-//                daysSelected = selectedDays;
             }
         });
 
@@ -179,7 +206,6 @@ public class CreateAlarm extends AppCompatActivity {
         AlertDialog dialog = dialogBuilder.create();
         dialog.show();
     }
-
 
 
     protected void showTimePickerDialog() {
@@ -218,7 +244,7 @@ public class CreateAlarm extends AppCompatActivity {
 
                 // Assuming you have a TextView for displaying the selected time
                 pickedTime.setText(selectedTime);
-                pickedTimeForStore =selectedTime24Hr;
+                pickedTimeForStore = selectedTime24Hr;
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
