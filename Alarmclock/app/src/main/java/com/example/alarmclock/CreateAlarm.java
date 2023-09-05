@@ -67,7 +67,6 @@ public class CreateAlarm extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle cancel button click
                 finish(); // Close the activity
             }
         });

@@ -1,6 +1,13 @@
 package com.example.alarmclock.database;
 
-public class AlarmModel {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+import java.io.Serializable;
+
+public class AlarmModel implements Serializable {
     private long id;
     private String alarm_name;
     private String time_for_display;
@@ -8,6 +15,14 @@ public class AlarmModel {
     private String selectedDays;
     private String ringtone_uri;
     private String status;
+
+    public AlarmModel(){
+
+    }
+
+
+
+
 
     public String getStatus() {
         return status;
@@ -76,4 +91,6 @@ public class AlarmModel {
                 ", status=" + status +
                 '}';
     }
+
+
 }

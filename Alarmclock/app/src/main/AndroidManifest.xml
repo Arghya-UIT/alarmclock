@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
 
 
@@ -25,13 +27,25 @@
         tools:targetApi="31">
         <activity android:name=".CreateAlarm"/>
         <activity android:name=".EditAlarmActivity"></activity>
-        <activity android:name=".AlarmScreenActivity"></activity>
+        <receiver
+            android:name=".AlarmActionReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="SNOOZE_ALARM" />
+                <action android:name="DISMISS_ALARM" />
+            </intent-filter>
+        </receiver>
+
+
         <receiver
             android:name=".AlarmReceiver"
             android:enabled="true"
             android:exported="false">
-            <!-- Intent filters if any -->
 
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
         </receiver>
 
         <activity
