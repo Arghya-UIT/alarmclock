@@ -14,29 +14,42 @@ public class AlarmActionReceiver extends BroadcastReceiver {
         String action = intent.getAction();
 
         if ("SNOOZE_ALARM".equals(action)) {
-            Uri alarmsound = Uri.parse(intent.getStringExtra("sound"));
-            long id = intent.getLongExtra("id", -1);
+            String uriString = intent.getStringExtra("sound");
 
-            long snoozeTimeMillis = System.currentTimeMillis() + (1 * 60 * 1000); // 1 minute
+            if (uriString != null) {
+                Uri alarmsound = Uri.parse(uriString);
 
-            Intent snoozeIntent = new Intent(context, AlarmReceiver.class);
-            snoozeIntent.putExtra("id", id);
-            snoozeIntent.putExtra("sound", alarmsound);
+                // Now you can use the 'alarmsound' Uri
+                long id = intent.getLongExtra("id", -1);
+                long snoozeTimeMillis = System.currentTimeMillis() + (1 * 60 * 1000); // 1 minute
 
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                // Rest of your snooze logic here...
+                Intent snoozeIntent = new Intent(context, AlarmReceiver.class);
+                snoozeIntent.putExtra("id", id);
+                snoozeIntent.putExtra("sound", alarmsound.toString());
 
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            if (alarmManager != null) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, snoozeTimeMillis, pendingIntent);
-            }
-            Log.d("scheduled", "1 min");
-        } else if ("DISMISS_ALARM".equals(action)) {
-            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            if (notificationManager != null) {
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+                AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                if (alarmManager != null) {
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, snoozeTimeMillis, pendingIntent);
+                    Log.d("executeeeeeee", " ++++");
+                } else {
+                    // Handle the case when 'uriString' is null
+                    // This could be due to missing data in the intent
+                    Log.d("this is", "---------");
+                }
+            } else if ("DISMISS_ALARM".equals(action)) {
                 long notificationId = intent.getLongExtra("notificationId", -1);
-                notificationManager.cancel((int) notificationId);
+                Log.d("DismissAction", "Cancelling notification with ID: " + notificationId);
+
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                if (notificationManager != null) {
+//                long notificationId = intent.getLongExtra("notificationId", -1);
+                    notificationManager.cancel((int) notificationId);
+                }
             }
         }
-    }
 
+    }
 }

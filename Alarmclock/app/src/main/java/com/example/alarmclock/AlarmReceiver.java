@@ -73,6 +73,10 @@ public class AlarmReceiver extends BroadcastReceiver {
             if (mNotificationManager == null) {
                 return; // Handle error gracefully
             }
+            int notificationId = (int) alarmModel.getId();
+
+// Notify and then cancel the notification when "Dismiss" action is clicked
+            mNotificationManager.notify(notificationId, mBuilder.build());
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 AudioAttributes audioAttributes = new AudioAttributes.Builder()
